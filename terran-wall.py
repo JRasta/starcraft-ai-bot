@@ -7,6 +7,7 @@ import random
 import sc2
 from sc2 import Race, Difficulty
 from sc2.ids.unit_typeid import *
+from sc2.ids.ability_id import *
 from sc2.player import Bot, Computer
 from sc2.position import Point2, Point3
 
@@ -29,13 +30,13 @@ class RampWallBot(sc2.BotAI):
                 if unit.position.to2.distance_to(depo.position.to2) < 15:
                     break
             else:
-                await self.do(depo(UnitTypeId.MORPH_SUPPLYDEPOT_LOWER))
+                await self.do(depo(AbilityId.MORPH_SUPPLYDEPOT_LOWER))
 
         # Lower depos when no enemies are nearby
         for depo in self.units(UnitTypeId.SUPPLYDEPOTLOWERED).ready:
             for unit in self.known_enemy_units.not_structure:
                 if unit.position.to2.distance_to(depo.position.to2) < 10:
-                    await self.do(depo(UnitTypeId.MORPH_SUPPLYDEPOT_RAISE))
+                    await self.do(depo(AbilityId.MORPH_SUPPLYDEPOT_RAISE))
                     break
 
         depot_placement_positions = self.main_base_ramp.corner_depots
