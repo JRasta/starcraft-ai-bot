@@ -18,10 +18,10 @@ I am looking to create an AI bot based upon the three races within StarCraft II:
 * [Links]()  
  
 ##Prerequisites
-###**UNDER CONSTRUCTION !!!**
+###**UNDER CONSTRUCTION !!**
 
 ##Getting Started
-###**UNDER CONSTRUCTION !!!**
+###**UNDER CONSTRUCTION !!**
 
 ##Environment Details
 For a full description of the specifics of how the environment is configured, the observations and 
