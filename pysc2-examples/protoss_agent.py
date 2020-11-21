@@ -127,7 +127,7 @@ class RuleBaseAgent(base_agent.BaseAgent):
 def main(unused_argv):
     agent = RuleBaseAgent()
     # game_map does not require LE at the end
-    game_map = 'AbyssalReef'
+    game_map = 'Triton'
     try:
         while True:
             with sc2_env.SC2Env(
