@@ -5,27 +5,30 @@ from absl import app
 import random
 
 
+def can_do(obs, action):
+    return action in obs.observation.available_actions
+
+
+def get_units_by_type(obs, unit_type):
+    return [unit for unit in obs.observation.feature_units
+            if unit.unit_type == unit_type]
+
+
+def unit_type_is_selected(obs, unit_type):
+    if (len(obs.observation.single_select) > 0 and
+       obs.observation.single_select[0].unit_type == unit_type):
+        return True
+    if (len(obs.observation.multi_select) > 0 and
+       obs.observation.multi_select[0].unit_type == unit_type):
+        return True
+    else:
+        return False
+
+
 class ZergBOT(base_agent.BaseAgent):
     def __init__(self):
         super(ZergBOT, self).__init__()
         self.attack_coordinates = None
-
-    def unit_type_is_selected(self, obs, unit_type):
-        if (len(obs.observation.single_select) > 0 and
-           obs.observation.single_select[0].unit_type == unit_type):
-            return True
-        if (len(obs.observation.multi_select) > 0 and
-           obs.observation.multi_select[0].unit_type == unit_type):
-            return True
-        else:
-            return False
-
-    def get_units_by_type(self, obs, unit_type):
-        return [unit for unit in obs.observation.feature_units
-                if unit.unit_type == unit_type]
-
-    def can_do(self, obs, action):
-        return action in obs.observation.available_actions
 
     def step(self, obs):
         super(ZergBOT, self).step(obs)
@@ -42,13 +45,13 @@ class ZergBOT(base_agent.BaseAgent):
             else:
                 self.attack_coordinates = (12, 16)
 
-        zergling_units = self.get_units_by_type(obs, units.Zerg.Zergling)
+        zergling_units = get_units_by_type(obs, units.Zerg.Zergling)
         if len(zergling_units) > 0:
-            if self.unit_type_is_selected(obs, units.Zerg.Zergling):
-                if self.can_do(obs, actions.FUNCTIONS.Attack_minimap.id):
+            if unit_type_is_selected(obs, units.Zerg.Zergling):
+                if can_do(obs, actions.FUNCTIONS.Attack_minimap.id):
                     return actions.FUNCTIONS.Attack_minimap('now', self.attack_coordinates)
 
-        larva_units = self.get_units_by_type(obs, units.Zerg.Larva)
+        larva_units = get_units_by_type(obs, units.Zerg.Larva)
         print(len(larva_units))
 
         # Check available larva
@@ -57,27 +60,27 @@ class ZergBOT(base_agent.BaseAgent):
             actions.FUNCTIONS.select_point("select_all_type", (larvae_unit.x,
                                                                larvae_unit.y))
 
-            if self.unit_type_is_selected(obs, units.Zerg.Larva):
-                if self.can_do(obs, actions.FUNCTIONS.Train_Drone_quick.id):
+            if unit_type_is_selected(obs, units.Zerg.Larva):
+                if can_do(obs, actions.FUNCTIONS.Train_Drone_quick.id):
                     return actions.FUNCTIONS.Train_Drone_quick('now')
 
         # Select Larva and build a zergling
-        if self.unit_type_is_selected(obs, units.Zerg.Larva):
-            if self.can_do(obs, actions.FUNCTIONS.Train_Zergling_quick.id):
+        if unit_type_is_selected(obs, units.Zerg.Larva):
+            if can_do(obs, actions.FUNCTIONS.Train_Zergling_quick.id):
                 return actions.FUNCTIONS.Train_Zergling_quick('now')
 
-        spawning_pool_count = self.get_units_by_type(obs, units.Zerg.SpawningPool)
+        spawning_pool_count = get_units_by_type(obs, units.Zerg.SpawningPool)
 
         # If not spawning pool create one
         if len(spawning_pool_count) == 0:
             # Once drone has been selected create a spawning pool
-            if self.unit_type_is_selected(obs, units.Zerg.Drone):
-                if self.can_do(obs, actions.FUNCTIONS.Build_SpawningPool_screen.id):
+            if unit_type_is_selected(obs, units.Zerg.Drone):
+                if can_do(obs, actions.FUNCTIONS.Build_SpawningPool_screen.id):
                     x = random.randint(0, 63)
                     y = random.randint(0, 63)
                     return actions.FUNCTIONS.Build_SpawningPool_screen('now', (x, y))
 
-        drone_units = self.get_units_by_type(obs, units.Zerg.Drone)
+        drone_units = get_units_by_type(obs, units.Zerg.Drone)
         if len(drone_units) > 0:
             drone_unit = random.choice(drone_units)
             return actions.FUNCTIONS.select_point("select_all_type", (drone_unit.x,
@@ -119,4 +122,4 @@ def main(unused_argv):
 
 
 if __name__ == "__main__":
-  app.run(main)
+    app.run(main)
