@@ -92,7 +92,8 @@ class ZergBOT(base_agent.BaseAgent):
 def main(unused_argv):
     agent = ZergBOT()
     # game_map does not require LE at the end
-    game_map = 'Triton'
+    # current maps 'Acropolis', 'DiscoBloodbath', 'Ephemeron', 'Thunderbird', 'Triton', 'WintersGate', 'WorldofSleepers'
+    game_map = 'WintersGate'
     try:
         while True:
             with sc2_env.SC2Env(
